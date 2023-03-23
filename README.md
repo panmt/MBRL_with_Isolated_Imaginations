@@ -41,6 +41,7 @@ Iso-Dream is implemented and tested on Ubuntu 18.04 with python == 3.7, PyTorch 
   
      Download and setup CARLA 0.9.10
      ```
+     cd iso_rl
      chmod +x setup_carla.sh
      ./setup_carla.sh
      ```
@@ -63,13 +64,13 @@ Iso-Dream is implemented and tested on Ubuntu 18.04 with python == 3.7, PyTorch 
 
      Terminal 2:
      ```
-     cd dmc_carla_iso
+     cd iso_rl
      python dreamer.py --logdir log/iso_carla --sz_sparse True --min_free True --max_action True --seed 9 --configs defaults carla
      ```
 
   3. Evaluation
      ```
-     cd dmc_carla_iso
+     cd iso_rl
      python test.py --logdir test --sz_sparse True --min_free True --max_action True --configs defaults carla
      ```
 
@@ -77,10 +78,10 @@ Iso-Dream is implemented and tested on Ubuntu 18.04 with python == 3.7, PyTorch 
 
   1. Setup DMC with video background
   
-    The dependencies can be installed with the following commands:
+    Download 'envs' from [Google Drive](https://drive.google.com/drive/folders/1vAHRBx7zlK-XHowSOAv-gBPWlubvpnCo?usp=sharing) and put it in the 'iso_rl'. The dependencies can then be installed with the following commands:
   
      ```
-     cd dmc_carla_iso
+     cd iso_rl
      
      cd ./envs/dm_control
      pip install -e .
@@ -108,7 +109,7 @@ Train and test Iso-Dream on BAIR and RoboNet datasets. Also, install Tensorflow 
 2. Train the model. You can use the following bash script to train the model. The learned model will be saved in the `--save_dir` folder.
   The generated future frames will be saved in the `--gen_frm_dir` folder. 
     ```
-    cd bair_robonet_iso
+    cd iso_video_prediction
     sh train_iso_model.sh
     ```
 

@@ -10,15 +10,112 @@ Minting Pan, Xiangming Zhu, Yunbo Wang, Xiaokang Yang
 
 ## Description
 
-This work is an extension version of our previous work [(NeurIPS 2022)](https://arxiv.org/abs/2205.13817). For clarity, the detailed contributions of the preliminary conference paper are first summarized as follows:
-1.We proposed a novel world model that utilizes modular network structures and inverse dynamics to separate mixed dynamics into controllable and noncontrollable components. This approach enables the model to individually transit different sources of visual dynamics.
-2.We introduced a new actor-critic algorithm that makes future-dependent decisions. The action model in this algorithm rolls out noncontrollable dynamics into the future, using an attention mechanism to learn their influence on current behavior. It enables the agent to thoroughly consider possible future interactions with the environment.
-3.We evaluated our approach on two reinforcement learning environments, namely the DeepMind Control Suite and CARLA, as well as two real-world datasets for action-conditioned video prediction, namely the BAIR robot pushing and RoboNet.
+This work is an extension version of our previous work [Iso-Dream (NeurIPS 2022)](https://arxiv.org/abs/2205.13817). We propose a novel world model that utilizes modular network structures and inverse dynamics to separate mixed dynamics into controllable and noncontrollable components. This approach enables the model to individually transit different sources of visual dynamics. Furthermore, We introduce a new actor-critic algorithm that makes future-dependent decisions. The action model in this algorithm rolls out noncontrollable dynamics into the future, using an attention mechanism to learn their influence on current behavior. It enables the agent to thoroughly consider possible future interactions with the environment. This work improves Iso-Dream in the following Three aspects:
 
-Summary of changes from the NeurIPS’22 article. This manuscript introduces several key changes to our NeurIPS '22 article, which can be summarized as follows:
-1.We propose the min-max variance constraints to isolate different dynamics in an unsupervised manner and prevent information collapse into a single state transition branch (Section 4.1.2). The key idea is to encourage the action-conditioned branch to produce different state transitions based on the same state and distinct actions, while penalizing the diversity of those in the action-free branch.
-2.We model the sparse dependency of next-step noncontrollable dynamics on current controllable dynamics to provide a more accurate simulation of some practical dynamic environments (Section 4.1.3). We employ the dependency gate in the action-free branch to determine when the controllable dynamics affect the transition of the next noncontrollable state. 
-3.We extend the experiments by including CARLA in the night mode and DeepMind Control Suite with video_hard backgrounds for transfer learning (Section 5.4). The isolation of controllable state transitions further facilitates transfer learning across different but related domains. We can adapt parts of the world model to novel domains based on our prior knowledge of the domain gap.
-4.We perform extensive experiments to verify the effectiveness of each proposed component, including ablation studies of the variance constraints (Fig. 14, 15) and the sparse state dependency (Fig. 10, 11).
+#### 1. Min-max variance constraints
+We propose the min-max variance constraints to isolate different dynamics in an unsupervised manner and prevent information collapse into a single state transition branch. The key idea is to encourage the action-conditioned branch to produce different state transitions based on the same state and distinct actions, while penalizing the diversity of those in the action-free branch.
+#### 2. Sparse dependency between decoupled State
+We model the sparse dependency of next-step noncontrollable dynamics on current controllable dynamics to provide a more accurate simulation of some practical dynamic environments. We employ the dependency gate in the action-free branch to determine when the controllable dynamics affect the transition of the next noncontrollable state. 
+#### 3. Transfer learning
+We extend the experiments by including CARLA in the night mode and DeepMind Control Suite with video_hard backgrounds for transfer learning. The isolation of controllable state transitions further facilitates transfer learning across different but related domains. We can adapt parts of the world model to novel domains based on our prior knowledge of the domain gap.
 
-Overall, these changes significantly improve the effectiveness of our proposed approach in isolating different dynamics, preventing information collapse, modeling sparse dependencies, and facilitating transfer learning across related domains. 
+## Get Started
+Iso-Dream is implemented and tested on Ubuntu 18.04 with python == 3.7, PyTorch == 1.9.0:
+
+1. Create an environment 
+   ```
+   conda create -n iso-env python=3.7
+   conda activate iso-env
+   ```   
+
+2. Install dependencies
+   ```
+   pip install -r requirements.txt
+   ```
+
+### DMC / CARLA
+
+#### For CARLA environment:
+
+  1. Setup
+  
+     Download and setup CARLA 0.9.10
+     ```
+     chmod +x setup_carla.sh
+     ./setup_carla.sh
+     ```
+     
+     Add to your python path:
+     ```
+     export PYTHONPATH=$PYTHONPATH:/home/CARLA_0.9.10/PythonAPI
+     export PYTHONPATH=$PYTHONPATH:/home/CARLA_0.9.10/PythonAPI/carla
+     export PYTHONPATH=$PYTHONPATH:/home/CARLA_0.9.10/PythonAPI/carla/dist/carla-0.9.10-py3.7-linux-x86_64.egg
+     ```
+     and merge the directories.
+
+  2. Training
+  
+     Terminal 1:
+     ```
+     cd CARLA_0.9.10
+     bash CarlaUE4.sh -fps 20 -opengl
+     ```
+
+     Terminal 2:
+     ```
+     cd dmc_carla_iso
+     python dreamer.py --logdir log/iso_carla --sz_sparse True --min_free True --max_action True --seed 9 --configs defaults carla
+     ```
+
+  3. Evaluation
+     ```
+     cd dmc_carla_iso
+     python test.py --logdir test --sz_sparse True --min_free True --max_action True --configs defaults carla
+     ```
+
+#### For DMC environment:
+
+  1. Setup DMC with video background
+  
+    The dependencies can be installed with the following commands:
+  
+     ```
+     cd dmc_carla_iso
+     
+     cd ./env/dm_control
+     pip install -e .
+     
+     cd ../dmc2gym
+     pip install -e .
+
+     cd ../..
+     ```
+
+  2. Training
+     ```
+     python dreamer.py --logdir log/iso_dmc --sz_sparse False --min_free True --max_action True --seed 4 --configs defaults dmc --task dmcbg_walker_walk
+     ```
+  
+
+### BAIR / RoboNet
+Train and test Iso-Dream on BAIR and RoboNet datasets. Also, install Tensorflow 2.1.0 for BAIR dataloader.
+
+1. Download BAIR data. 
+   ```
+   wget http://rail.eecs.berkeley.edu/datasets/bair_robot_pushing_dataset_v0.tar
+   ```
+
+2. Train the model. You can use the following bash script to train the model. The learned model will be saved in the `--save_dir` folder.
+  The generated future frames will be saved in the `--gen_frm_dir` folder. 
+    ```
+    cd bair_robonet_iso
+    sh train_iso_model.sh
+    ```
+
+
+## Acknowledgement
+We appreciate the following github repos where we borrow code from:
+
+https://github.com/jsikyoon/dreamer-torch
+
+https://github.com/thuml/predrnn-pytorch

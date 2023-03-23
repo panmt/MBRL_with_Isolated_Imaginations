@@ -33,7 +33,7 @@ Iso-Dream is implemented and tested on Ubuntu 18.04 with python == 3.7, PyTorch 
    pip install -r requirements.txt
    ```
 
-### DMC / CARLA
+### CARLA / DMC
 
 #### For CARLA environment:
 

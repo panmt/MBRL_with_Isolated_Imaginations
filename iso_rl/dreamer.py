@@ -5,7 +5,7 @@ import os
 import pathlib
 import sys
 import warnings
-from agents.navigation.carla_env_dreamer import CarlaEnv
+from agents.navigation.carla_env_dream import CarlaEnv
 
 os.environ['MUJOCO_GL'] = 'egl'
 

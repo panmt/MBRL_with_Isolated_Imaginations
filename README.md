@@ -1,7 +1,7 @@
 # Iso-Dream++: Model-Based Reinforcement Learning with Isolated Imaginations (TPAMI)
 Code repository for the paper: 
 
-#### Model-Based Reinforcement Learning with Isolated Imaginations 
+#### Model-Based Reinforcement Learning with Isolated Imaginations [[arxiv]](https://arxiv.org/abs/2303.14889)
 
 Minting Pan, Xiangming Zhu, Yitao Zheng, Yunbo Wang, Xiaokang Yang
 

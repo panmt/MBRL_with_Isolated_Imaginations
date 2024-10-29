@@ -385,7 +385,7 @@ class ImagBehavior(nn.Module):
       state, _, _ = prev
       if self._config.rollout_policy:
         men_free = []
-        start_free = start.copy()
+        start_free = state.copy()
         if self._config.sz_sparse:
           gate_feat = torch.cat([start_free['deter_free'], start_free['deter']], -1)
           gate_feat = dynamics.prior_gate(gate_feat)
